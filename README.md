@@ -1,11 +1,17 @@
-# auto-toc.nvim
+<!-- auto-toc:start -->
+- [auto-toc.nvim](#auto-tocnvim)
+  - [Installation](#installation)
+    - [Local checkout](#local-checkout)
+  - [Usage](#usage)
+  - [Tests](#tests)
+<!-- auto-toc:end -->
 
-Maintain a linked table of contents in Markdown and MDX while editing in Neovim.
+# auto-toc.nvim
+Generates the table of contents in your *.md/*.mdx file automatically.
 
 ## Installation
 
-Requires Neovim 0.12 or later with the bundled `markdown` and `markdown_inline`
-Tree-sitter parsers.
+Requires Neovim 0.12 or later with the bundled `markdown` and `markdown_inline` Tree-sitter parsers.
 
 Add this spec to the directory your `lazy.nvim` config imports.
 
@@ -56,12 +62,6 @@ It also processes pending heading changes before a write.
   TOC immediately.
 - `:AutoTocOff` disables automatic updates for the current buffer and keeps
   its existing TOC.
-- The generated list goes before the document body, after any leading front
-  matter. Its start and end comments identify the region the plugin manages.
-  Removing the final heading removes the managed list.
-- Links use GitHub-style heading fragments. MDX support covers Markdown
-  headings and fenced code outside JSX and JavaScript. Configure your MDX
-  renderer to generate matching heading IDs for the links to work.
 
 See `:help auto-toc` for details.
 
