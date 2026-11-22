@@ -5,8 +5,19 @@ Maintain a linked table of contents in Markdown and MDX while editing in Neovim.
 ## Installation
 
 Requires Neovim 0.12 or later with the bundled `markdown` and `markdown_inline`
-Tree-sitter parsers. For a local copy, add its path to `runtimepath` in
-`init.lua`:
+Tree-sitter parsers.
+
+Add this spec to the directory your `lazy.nvim` config imports.
+
+```lua
+return {
+  'tttol/auto-toc.nvim',
+}
+```
+
+### Local checkout
+
+For a local copy, add its path to `runtimepath` in `init.lua`.
 
 ```lua
 vim.opt.runtimepath:prepend('/path/to/auto-toc.nvim')
@@ -20,9 +31,7 @@ manager. Use the checkout's absolute path or its remote Git URL:
 vim.pack.add({ { src = 'file:///path/to/auto-toc.nvim', name = 'auto-toc.nvim' } })
 ```
 
-### lazy.nvim
-
-Add this local plugin spec to the directory your `lazy.nvim` config imports:
+For local development with `lazy.nvim`, point the spec at your checkout.
 
 ```lua
 return {
@@ -43,8 +52,10 @@ Open a `.md` or `.mdx` file and add, rename, change the level of, or remove a
 It also processes pending heading changes before a write.
 
 - Opening a file or editing prose or code alone leaves the TOC untouched.
-- `:AutoTocToggle` pauses generation for the current buffer and keeps its TOC.
-  Run it again to resume and refresh the TOC immediately.
+- `:AutoTocOn` enables automatic updates and refreshes the current buffer's
+  TOC immediately.
+- `:AutoTocOff` disables automatic updates for the current buffer and keeps
+  its existing TOC.
 - The generated list goes before the document body, after any leading front
   matter. Its start and end comments identify the region the plugin manages.
   Removing the final heading removes the managed list.

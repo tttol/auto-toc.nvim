@@ -203,11 +203,12 @@ function M.flush(buf)
   end
 end
 
---- Toggle automatic generation for the current buffer.
+--- Set automatic generation for a Markdown or MDX buffer.
 --- @param buf integer
-function M.toggle(buf)
+--- @param enabled boolean
+function M.set_enabled(buf, enabled)
   if not extension(buf) then
-    vim.notify('Open a .md or .mdx file to toggle automatic TOC generation', vim.log.levels.INFO,
+    vim.notify('Open a .md or .mdx file to change automatic TOC generation', vim.log.levels.INFO,
       { title = 'auto-toc.nvim' })
     return
   end
@@ -217,15 +218,14 @@ function M.toggle(buf)
     return
   end
 
-  local disabled = not vim.b[buf].auto_toc_disabled
-  vim.b[buf].auto_toc_disabled = disabled
-  if disabled then
-    cancel(state)
-  else
+  vim.b[buf].auto_toc_disabled = not enabled
+  if enabled then
     reconcile(buf, state, true)
+  else
+    cancel(state)
   end
 
-  vim.notify(disabled and 'Automatic TOC generation paused' or 'Automatic TOC generation resumed',
+  vim.notify(enabled and 'Automatic TOC generation enabled' or 'Automatic TOC generation disabled',
     vim.log.levels.INFO, { title = 'auto-toc.nvim' })
 end
 

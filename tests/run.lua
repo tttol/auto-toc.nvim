@@ -69,7 +69,9 @@ local function test(name, run)
 end
 
 test('startup defers loading and ignores other extensions', function()
-  equal(2, vim.fn.exists(':AutoTocToggle'))
+  equal(2, vim.fn.exists(':AutoTocOn'))
+  equal(2, vim.fn.exists(':AutoTocOff'))
+  equal(0, vim.fn.exists(':AutoTocToggle'))
   local buf = open('.txt', { '# Ignored' })
 
   append(buf, { '## Also ignored' })
@@ -268,23 +270,37 @@ test('write flushes pending heading changes before the debounce', function()
   equal(false, vim.bo[buf].modified)
 end)
 
-test('toggle cancels pending generation and is local to the buffer', function()
+test('AutoTocOff cancels pending generation and AutoTocOn resumes it for one buffer', function()
   local first = open('.md', { '# A' })
   replace(first, '# A', { '# First' })
   await_block(first, toc(md_start, md_end, { '- [First](#first)' }))
 
   replace(first, '# First', { '# Paused' })
-  vim.cmd.AutoTocToggle()
+  vim.cmd.AutoTocOff()
+  replace(first, '# Paused', { '# While disabled' })
+  vim.cmd.AutoTocOff()
   local second = open('.md', { '# B' })
   replace(second, '# B', { '# Second' })
   await_block(second, toc(md_start, md_end, { '- [Second](#second)' }))
   equal(toc(md_start, md_end, { '- [First](#first)' }), block(first, md_start, md_end))
 
   api.nvim_set_current_buf(first)
-  vim.cmd.AutoTocToggle()
+  vim.cmd.AutoTocOn()
 
-  equal(toc(md_start, md_end, { '- [Paused](#paused)' }), block(first, md_start, md_end))
-  equal('Automatic TOC generation resumed', notices[#notices])
+  equal(toc(md_start, md_end, { '- [While disabled](#while-disabled)' }), block(first, md_start, md_end))
+  equal('Automatic TOC generation enabled', notices[#notices])
+end)
+
+test('AutoTocOn creates a TOC from existing headings and can be repeated', function()
+  local buf = open('.mdx', { '# Existing heading' })
+  equal(nil, block(buf, mdx_start, mdx_end))
+
+  vim.cmd.AutoTocOn()
+  local tick = api.nvim_buf_get_changedtick(buf)
+  vim.cmd.AutoTocOn()
+
+  equal(toc(mdx_start, mdx_end, { '- [Existing heading](#existing-heading)' }), block(buf, mdx_start, mdx_end))
+  equal(tick, api.nvim_buf_get_changedtick(buf))
 end)
 
 test('undo and redo restore both the heading and the TOC', function()

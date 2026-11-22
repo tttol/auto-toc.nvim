@@ -26,9 +26,13 @@ markers before refreshing the TOC.
 
 COMMANDS                                               *auto-toc-commands*
 
-:AutoTocToggle                                             *:AutoTocToggle*
-    Toggle automatic generation for the current buffer. While paused, the
-    existing TOC stays in the document. Resuming refreshes it immediately.
-    The toggle applies for the lifetime of the buffer.
+:AutoTocOn                                                     *:AutoTocOn*
+    Enable automatic generation for the current buffer and refresh its TOC.
+
+:AutoTocOff                                                   *:AutoTocOff*
+    Disable automatic generation for the current buffer. The existing TOC
+    stays in the document.
+
+The setting applies for the lifetime of the buffer.
 
  vim:tw=78:ts=8:ft=help:norl:

@@ -3,9 +3,13 @@ if vim.g.loaded_auto_toc or vim.fn.has('nvim-0.12') == 0 then
 end
 vim.g.loaded_auto_toc = true
 
-vim.api.nvim_create_user_command('AutoTocToggle', function()
-  require('auto-toc').toggle(vim.api.nvim_get_current_buf())
-end, { desc = 'Toggle automatic table of contents for this buffer' })
+vim.api.nvim_create_user_command('AutoTocOn', function()
+  require('auto-toc').set_enabled(vim.api.nvim_get_current_buf(), true)
+end, { desc = 'Enable and refresh the automatic table of contents for this buffer' })
+
+vim.api.nvim_create_user_command('AutoTocOff', function()
+  require('auto-toc').set_enabled(vim.api.nvim_get_current_buf(), false)
+end, { desc = 'Disable automatic table of contents updates for this buffer' })
 
 local group = vim.api.nvim_create_augroup('AutoToc', { clear = true })
 local patterns = { '*.md', '*.mdx' }
