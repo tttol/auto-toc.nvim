@@ -1,0 +1,13 @@
+# Lua bytecode and coverage
+*.luac
+luac.out
+luacov.stats.out
+luacov.report.out
+
+# Local LuaRocks installations
+/.luarocks/
+/lua_modules/
+
+# Generated Neovim files
+/doc/tags
+/nvim.log
