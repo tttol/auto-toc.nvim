@@ -1,12 +1,3 @@
-<!-- auto-toc:start -->
-- [auto-toc.nvim](#auto-tocnvim)
-  - [Installation](#installation)
-    - [Local checkout](#local-checkout)
-  - [Configuration](#configuration)
-  - [Usage](#usage)
-  - [Tests](#tests)
-<!-- auto-toc:end -->
-
 # auto-toc.nvim
 Generates the table of contents in your *.md/*.mdx file automatically.
 
