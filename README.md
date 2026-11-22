@@ -1,6 +1,6 @@
 # auto-toc.nvim
 Generates the table of contents in your *.md/*.mdx file automatically.
-
+![demo](demo/demo-auto-toc.gif)
 ## Installation
 
 Requires Neovim 0.12 or later with the bundled `markdown` and `markdown_inline` Tree-sitter parsers.
