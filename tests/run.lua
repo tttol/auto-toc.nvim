@@ -303,6 +303,46 @@ test('AutoTocOn creates a TOC from existing headings and can be repeated', funct
   equal(tick, api.nvim_buf_get_changedtick(buf))
 end)
 
+test('setup can start Markdown and MDX buffers with automatic updates disabled', function()
+  local plugin = require('auto-toc')
+  plugin.setup({ enabled = false })
+  local markdown = open('.md', { '# Markdown' })
+  local mdx = open('.mdx', { '# MDX' })
+
+  append(markdown, { '## Section' })
+  append(mdx, { '## Section' })
+  idle()
+  equal(nil, block(markdown, md_start, md_end))
+  equal(nil, block(mdx, mdx_start, mdx_end))
+
+  vim.cmd.AutoTocOn()
+  equal(toc(mdx_start, mdx_end, { '- [MDX](#mdx)', '  - [Section](#section)' }), block(mdx, mdx_start, mdx_end))
+  equal(nil, block(markdown, md_start, md_end))
+  plugin.setup()
+end)
+
+test('changing the default cancels pending updates and preserves buffer overrides', function()
+  local plugin = require('auto-toc')
+  local enabled = open('.md', { '# Enabled' })
+  vim.cmd.AutoTocOn()
+  local inherited = open('.md', { '# Inherited' })
+  append(inherited, { '## Before setup' })
+
+  plugin.setup({ enabled = false })
+  append(enabled, { '## Still enabled' })
+  await_block(enabled, toc(md_start, md_end, { '- [Enabled](#enabled)', '  - [Still enabled](#still-enabled)' }))
+  equal(nil, block(inherited, md_start, md_end))
+
+  plugin.setup({ enabled = true })
+  append(inherited, { '', 'A paragraph.' })
+  idle()
+  equal(nil, block(inherited, md_start, md_end))
+  append(inherited, { '## After setup' })
+  await_block(inherited, toc(md_start, md_end, {
+    '- [Inherited](#inherited)', '  - [Before setup](#before-setup)', '  - [After setup](#after-setup)',
+  }))
+end)
+
 test('undo and redo restore both the heading and the TOC', function()
   local initial = { '# Before', '', 'Body' }
   local buf = open('.md', initial)

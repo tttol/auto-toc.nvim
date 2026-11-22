@@ -2,6 +2,7 @@
 - [auto-toc.nvim](#auto-tocnvim)
   - [Installation](#installation)
     - [Local checkout](#local-checkout)
+  - [Configuration](#configuration)
   - [Usage](#usage)
   - [Tests](#tests)
 <!-- auto-toc:end -->
@@ -50,6 +51,22 @@ return {
 If you add to `runtimepath` after `lazy.nvim` has started, source the entry
 point explicitly with `vim.cmd.runtime('plugin/auto-toc.lua')`. In an open
 Neovim session with the path already added, run `:runtime plugin/auto-toc.lua`.
+
+## Configuration
+
+Automatic updates are enabled by default. To start with them disabled, set
+`enabled = false` in your `lazy.nvim` spec.
+
+```lua
+return {
+  'tttol/auto-toc.nvim',
+  opts = { enabled = false },
+}
+```
+
+For a manual installation, call `require('auto-toc').setup({ enabled = false })`
+after adding the plugin to `runtimepath`. The commands below override the
+default for the current buffer.
 
 ## Usage
 

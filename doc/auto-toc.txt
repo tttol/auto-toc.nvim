@@ -6,7 +6,7 @@ It requires Neovim 0.12+ and the bundled Markdown Tree-sitter parsers.
 
 BEHAVIOR                                               *auto-toc-behavior*
 
-The plugin starts enabled for each normal .md and .mdx buffer. It records
+By default, the plugin starts enabled for normal .md and .mdx buffers. It records
 headings on open and writes a TOC after a heading changes. Updates run after
 150 ms of inactivity or before writing the buffer. Update operations edit the
 buffer and become part of the file when you save it.
@@ -23,6 +23,15 @@ The plugin owns the lines between its start and end marker comments. It
 updates that region in place and removes it when the last heading disappears.
 If the document contains unmatched, reversed, or duplicate markers, fix the
 markers before refreshing the TOC.
+
+CONFIGURATION                                      *auto-toc-configuration*
+
+Set enabled to false to start with automatic generation disabled. >lua
+
+    require('auto-toc').setup({ enabled = false })
+<
+The default value of enabled is true. The commands below override the
+configured default for the current buffer.
 
 COMMANDS                                               *auto-toc-commands*
 

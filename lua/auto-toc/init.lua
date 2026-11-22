@@ -5,11 +5,20 @@ local render = require('auto-toc.render')
 local M = {}
 local buffers = {}
 local debounce_ms = 150
+local default_enabled = true
 
 local function extension(buf)
   if api.nvim_buf_is_loaded(buf) and vim.bo[buf].buftype == '' then
     return api.nvim_buf_get_name(buf):match('%.(mdx?)$')
   end
+end
+
+local function is_enabled(buf)
+  local disabled = vim.b[buf].auto_toc_disabled
+  if disabled == nil then
+    return default_enabled
+  end
+  return not disabled
 end
 
 local function warn(state, message)
@@ -71,7 +80,7 @@ local function reconcile(buf, state, force)
   if buffers[buf] ~= state or not state.extension or extension(buf) ~= state.extension then
     return
   end
-  if vim.b[buf].auto_toc_disabled or (not force and not state.pending) then
+  if not is_enabled(buf) or (not force and not state.pending) then
     return
   end
   if not vim.bo[buf].modifiable or vim.bo[buf].readonly then
@@ -132,6 +141,29 @@ local function queue(buf, state)
   end))
 end
 
+--- Configure automatic generation for buffers without an explicit override.
+--- @param opts? { enabled: boolean? }
+function M.setup(opts)
+  vim.validate('opts', opts, 'table', true)
+  local enabled = (opts or {}).enabled
+  vim.validate('enabled', enabled, 'boolean', true)
+  enabled = enabled ~= false
+  if default_enabled == enabled then
+    return
+  end
+  default_enabled = enabled
+
+  for buf, state in pairs(buffers) do
+    if state.extension and api.nvim_buf_is_loaded(buf) and vim.b[buf].auto_toc_disabled == nil then
+      if enabled then
+        reset(buf, state)
+      else
+        cancel(state)
+      end
+    end
+  end
+end
+
 --- Establish the initial baseline and observe changes to an eligible buffer.
 --- @param buf integer
 function M.attach(buf)
@@ -155,7 +187,7 @@ function M.attach(buf)
   reset(buf, state)
   if api.nvim_buf_attach(buf, false, {
     on_lines = function(_, _, tick)
-      if tick and state.extension and not state.writing and not vim.b[buf].auto_toc_disabled then
+      if tick and state.extension and not state.writing and is_enabled(buf) then
         queue(buf, state)
       end
     end,
